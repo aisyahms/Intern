@@ -58,7 +58,7 @@ from surprise import SVD
 To test the performance of the model using the `SVD()` algorithm, input the arguments: df and cols into `svd_test(df, cols)`, as specified above.
 
 To train the model using the data input, input the arguments: df, user_id, new_min and new_max into `recommend(df, user_id, new_min, new_max)` as specified above.
-In the `recommend` function, duplicates of entries will be dropped, and only the 3 main cols will be used as part of the dataset loaded and read into surprise.
+In the `recommend` function, duplicates of entries will be dropped, and only the 3 main cols will be used as part of the data loaded and read into surprise.
 ```python
 df = df.drop_duplicates(subset=df.columns[2:].to_list(), keep='first') # df contains duplicate entries
 df = df[['UserId', 'ProductId', 'Score']].reset_index(drop=True)
@@ -91,7 +91,8 @@ predictions = fitted_model.test(new_data)
 ## Data Generated 
 ------------
 By running the main function, `recommend`, 
-1. a dataframe of products and their respective ratings by the user_id specified in the function argument. 
+1. a dataframe of products and their respective ratings by the user_id specified in the function argument
+
 If the user has products previously rated highly (defined as a rating of 4 or 5 here), <br />
 2. a maximum of 5 of those products will be output as a reminder of what their good previous purchases look like
 3. a maximum of 10 recommendations of products they have never rated before, based on other users and items they have rated
@@ -122,7 +123,7 @@ A1UQRSCLF8GW1T can consider repeat purchases for products like:
 Out[1]: ['B006K2ZZ7K', 'B003XDH6M6']
 ```
 If the user has never rated products highly (defined as a rating of 4 or 5), <br />
-2. a maximum of 10 recommendations of products they have never rated before, based on other users and items they have rated
+2. a maximum of 10 recommendations of products they have never rated before, based on other users and items they have rated <br />
 3. string output mentioning that the user has no prior highly rated purchases
 ```
 ----User Rating for Products Dataframe----
