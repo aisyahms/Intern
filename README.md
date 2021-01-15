@@ -55,9 +55,9 @@ from surprise import SVD
 
 ## How to Train
 ------------
-To test the performance of the model using the `SVD()` algorithm, input the arguments: df and cols into `svd_test(df, cols)`, as specified in above
+To test the performance of the model using the `SVD()` algorithm, input the arguments: df and cols into `svd_test(df, cols)`, as specified above
 
-To train the model using the data input, input the arguments: df, user_id, new_min and new_max into `recommend(df, user_id, new_min, new_max)` as specified above
+To train the model using the data input, input the arguments: df, user_id, new_min and new_max into `recommend(df, user_id, new_min, new_max)` as specified above.
 In the `recommend` function, duplicates of entries will be dropped, and only the 3 main cols will be used as part of the dataset loaded and read into surprise.
 ```python
 df = df.drop_duplicates(subset=df.columns[2:].to_list(), keep='first') # df contains duplicate entries
