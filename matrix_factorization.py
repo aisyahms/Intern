@@ -11,7 +11,6 @@ import surprise
 from surprise import Dataset, Reader
 from surprise.model_selection import train_test_split, cross_validate
 from surprise import SVD
-from surprise import accuracy
 
 # for reproducible results
 np.random.seed(3101)
