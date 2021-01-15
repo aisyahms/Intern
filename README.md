@@ -35,29 +35,57 @@ from surprise import SVD
 `svd_test(df, cols)` function:
 
 - df (dataframe): data set containing rows of product review/rating by users
-    1. The data set should ideally contain columns including User Id, Product Id, and Rating.
-    2. These 3 variables are needed to make up the data to pass through surprise package's functions.
+    - The data set should ideally contain columns including User Id, Product Id, and Rating.
+    - These 3 variables are needed to make up the data to pass through surprise package's functions.
 
 - cols (list): list of column names to be used as filtered data passing through surprise's `Dataset` and `Reader` functions
-    1. For NewProfile.csv, `cols = ['UserId', 'ProductId', 'Score']`
+    - For NewProfile.csv, `cols = ['UserId', 'ProductId', 'Score']`
 
 `recommend(df, user_id, new_min, new_max)` function:
 
 - df (dataframe): data set containing rows of product review/rating by users, same as df used in `svd_test`
 
 - user_id (str): user identification number/name
-    1. The user/customer that the script's functions should output recommendations for, based on the data set input.
+    - The user/customer that the script's functions should output recommendations for, based on the data set input.
 
 - new_min (int), new_max (int): current, or specified new range, for ratings by users
-    1. The minimum and maximum values of ratings should be taken across all entries and users. 
-    2. Range values will be used to pass through `Reader` function in surprise.
+    - The minimum and maximum values of ratings should be taken across all entries and users. 
+    - Range values will be used to pass through `Reader` function in surprise.
 
 
 ## How to Train
 ------------
-To train, input the arguments required (df, user_id, new_min, new_max), specified in Data Required above, into `recommend`.
-In the `recommend` function, duplicates of entries will be dropped, and only the 3 main columns will be used as part of the dataset loaded into surprise.
-The SVD algorithm is then initiated and the data set is fitted as the training data. 
+To test the performance of the model using the `SVD()` algorithm, input the arguments: df and cols into `svd_test(df, cols)`, as specified in above
+
+To train the model using the data input, input the arguments: df, user_id, new_min and new_max into `recommend(df, user_id, new_min, new_max)` as specified above
+In the `recommend` function, duplicates of entries will be dropped, and only the 3 main cols will be used as part of the dataset loaded and read into surprise.
+```python
+df = df.drop_duplicates(subset=df.columns[2:].to_list(), keep='first') # df contains duplicate entries
+df = df[['UserId', 'ProductId', 'Score']].reset_index(drop=True)
+```
+```python
+reader = Reader(rating_scale=(new_min, new_max)) # specify min and max ratings for rating_scale argument
+data = Dataset.load_from_df(df, reader)
+trainset = data.build_full_trainset()
+```
+The SVD algorithm is initiated and the data input is fitted as the training data. 
+```python
+algo = SVD()
+model = algo.fit(trainset)
+```
+Using the intermediate `svd_recommendation` function, the data is used to generate `new_data` by finding unique products that the user has not rated before. The SVD algorithm then predicts the user's ratings for these products.
+```python
+all_products = df['ProductId'].unique() # all unique products in the df given
+    
+user_df = df[df['UserId'] == user_id]
+user_products = user_df['ProductId'].unique() # all unique products user_id has rated   
+unrated_products = np.setdiff1d(all_products, user_products) # unique products user_id has never rated before
+    
+# data to predict on will comprise only of products user_id has not rated before 
+arbitrary_rating = 4.0 # since there are no ratings for products that user_id has never rated before
+new_data = [(user_id, pdt, arbitrary_rating) for pdt in unrated_products]    
+predictions = fitted_model.test(new_data)
+```
 
 
 ## Data Generated 
