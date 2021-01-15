@@ -91,11 +91,10 @@ predictions = fitted_model.test(new_data)
 ## Data Generated 
 ------------
 By running the main function, `recommend`, 
-1. a dataframe of products and their respective ratings by the user_id specified in the function argument
-
+1. a dataframe of products and their respective ratings by the user_id specified in the function argument <br />
 If the user has products previously rated highly (defined as a rating of 4 or 5 here), <br />
-2. a maximum of 5 of those products will be output as a reminder of what their good previous purchases look like
-3. a maximum of 10 recommendations of products they have never rated before, based on other users and items they have rated
+2. a maximum of 5 of those products will be output as a reminder of what their good previous purchases look like <br />
+3. a maximum of 10 recommendations of products they have never rated before, based on other users and items they have rated <br />
 4. a maximum of 5 other product recommendations based on what that they have rated highly before (similar to 2.)
 ```
 ----User Rating for Products Dataframe----
