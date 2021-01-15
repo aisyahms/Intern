@@ -1,9 +1,9 @@
-# Introduction
+## Introduction
 ------------
 matrix_factorization.py is a Singular Value Decomposition (SVD) script meant as a Collaborative Filtering approach for Recommender Systems. The script utilises the [surprise](http://surpriselib.com/) package, which deals with explicit rating data. The package is used to build a trainset using existing data, and to return rating predictions for a particular user where products with rating predictions on the higher spectrum can be output as recommendations specific for the user. 
 
 
-# Requirements
+## Requirements
 ------------
 The module requires the following libraries:
 
@@ -30,27 +30,37 @@ from surprise import SVD
 ```
 
 
-# Data Required
+## Data Required
 ------------
-- df (dataframe): data set containing rows of item review/rating by users
-df should ideally contain the rows: User Id, Product Id, and Rating 
+`svd_test(df, cols)` function:
+
+- df (dataframe): data set containing rows of product review/rating by users
+The data set should ideally contain columns including User Id, Product Id, and Rating.
 These 3 variables are needed to make up the data to pass through surprise package's functions.
 
-- user_id (str): user identification
-The user/customer that the script functions should output recommendations for, based on the df input.
+- cols (list): list of column names to be used as filtered data passing through surprise's `Dataset` and `Reader` functions
+For NewProfile.csv, `cols = ['UserId', 'ProductId', 'Score']`
 
-- range of ratings
-minimum rating (int) and maximum rating (int) found across all users in the data set input.
+`recommend(df, user_id, new_min, new_max)` function:
+
+- df (dataframe): data set containing rows of product review/rating by users, same as df used in `svd_test`
+
+- user_id (str): user identification number/name
+The user/customer that the script's functions should output recommendations for, based on the data set input.
+
+- new_min (int), new_max (int): current, or specified new range, for ratings by users
+The minimum and maximum values of ratings should be taken across all entries and users. 
+Range values will be used to pass through `Reader` function in surprise.
 
 
-# How to Train
+## How to Train
 ------------
 To train, input the arguments required (df, user_id, new_min, new_max), specified in Data Required above, into `recommend`.
 In the `recommend` function, duplicates of entries will be dropped, and only the 3 main columns will be used as part of the dataset loaded into surprise.
 The SVD algorithm is then initiated and the data set is fitted as the training data. 
 
 
-# Data Generated 
+## Data Generated 
 ------------
 Output of products and ratings by user specified in input. 
 If user has products previously rated highly, a maximum of 5 of those products will be output.
