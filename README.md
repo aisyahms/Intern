@@ -90,11 +90,37 @@ predictions = fitted_model.test(new_data)
 
 ## Data Generated 
 ------------
-Output of products and ratings by user specified in input. 
-If user has products previously rated highly, a maximum of 5 of those products will be output.
-Up to 10 recommendations (never rated before)
-Up to 5 of other recommendations  (rated before) will be output, should the user have rated these highly before. 
+By running the main function, `recommend`, 
+1. a dataframe of products and their respective ratings by the user_id specified in the function argument.
+- If the user has products previously rated highly (defined as a rating of 4 or 5 here), 
+    2. a maximum of 5 of those products will be output as a reminder of what their good previous purchases look like
+    3. a maximum of 10 recommendations of products they have never rated before, based on other users and items they have rated
+    4. a maximum of 5 other product recommendations based on what that they have rated highly before (similar to 2.)
+```python
+----User Rating for Products Dataframe----
+                UserId   ProductId  Score
+4       A1UQRSCLF8GW1T  B006K2ZZ7K      5
+346686  A1UQRSCLF8GW1T  B003XDH6M6      5
+------------------------------------------
+A1UQRSCLF8GW1T has rated items like this highly:
+['B006K2ZZ7K', 'B003XDH6M6']
 
+Recommendations for A1UQRSCLF8GW1T:
+        ProductId
+12949  B000KEJMRI
+8193   B000ES5GL6
+7590   B000ED9L9E
+14287  B000LRIFU4
+25687  B001E5E3B2
+25364  B001E53TMQ
+7603   B000EDBQ6A
+25700  B001E5E3X0
+30901  B001LO37PY
+23345  B0018CFN92
+
+A1UQRSCLF8GW1T can consider repeat purchases for products like:
+Out[1]: ['B006K2ZZ7K', 'B003XDH6M6']
+```
 If user has never rated products highly before, 
 Up to 10 recommendations (never rated before)
 A string saying that the user has no prior highly rated purchases.
