@@ -92,10 +92,10 @@ predictions = fitted_model.test(new_data)
 ------------
 By running the main function, `recommend`, 
 1. a dataframe of products and their respective ratings by the user_id specified in the function argument. <br />
-If the user has products previously rated highly (defined as a rating of 4 or 5 here), 
-    2. a maximum of 5 of those products will be output as a reminder of what their good previous purchases look like
-    3. a maximum of 10 recommendations of products they have never rated before, based on other users and items they have rated
-    4. a maximum of 5 other product recommendations based on what that they have rated highly before (similar to 2.)
+If the user has products previously rated highly (defined as a rating of 4 or 5 here), <br />
+2. a maximum of 5 of those products will be output as a reminder of what their good previous purchases look like
+3. a maximum of 10 recommendations of products they have never rated before, based on other users and items they have rated
+4. a maximum of 5 other product recommendations based on what that they have rated highly before (similar to 2.)
 ```
 ----User Rating for Products Dataframe----
                 UserId   ProductId  Score
@@ -121,7 +121,27 @@ Recommendations for A1UQRSCLF8GW1T:
 A1UQRSCLF8GW1T can consider repeat purchases for products like:
 Out[1]: ['B006K2ZZ7K', 'B003XDH6M6']
 ```
-If the user has never rated products highly (defined as a rating of 4 or 5),
-    2. a maximum of 10 recommendations of products they have never rated before, based on other users and items they have rated
-    3. string output mentioning that the user has no prior highly rated purchases
+If the user has never rated products highly (defined as a rating of 4 or 5), <br />
+2. a maximum of 10 recommendations of products they have never rated before, based on other users and items they have rated
+3. string output mentioning that the user has no prior highly rated purchases
+```
+----User Rating for Products Dataframe----
+           UserId   ProductId  Score
+1  A1D87F6ZCVE5NK  B00813GRG4      1
+------------------------------------------
 
+Recommendations for A1D87F6ZCVE5NK:
+        ProductId
+35749  B0029O0XGQ
+13656  B000LKXGKU
+33771  B001VNGG58
+7590   B000ED9L9E
+9693   B000FK7PQW
+29807  B001HXNIPS
+8725   B000F3YEPO
+25364  B001E53TMQ
+53302  B004IS56Y0
+9632   B000FICDO8
+
+Out[2]: 'A1D87F6ZCVE5NK had no prior highly rated purchases.'
+```
