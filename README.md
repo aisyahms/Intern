@@ -35,22 +35,22 @@ from surprise import SVD
 `svd_test(df, cols)` function:
 
 - df (dataframe): data set containing rows of product review/rating by users
-⋅⋅* The data set should ideally contain columns including User Id, Product Id, and Rating.
-⋅⋅* These 3 variables are needed to make up the data to pass through surprise package's functions.
+⋅⋅1. The data set should ideally contain columns including User Id, Product Id, and Rating.
+⋅⋅2. These 3 variables are needed to make up the data to pass through surprise package's functions.
 
 - cols (list): list of column names to be used as filtered data passing through surprise's `Dataset` and `Reader` functions
-⋅⋅* For NewProfile.csv, `cols = ['UserId', 'ProductId', 'Score']`
+⋅⋅1. For NewProfile.csv, `cols = ['UserId', 'ProductId', 'Score']`
 
 `recommend(df, user_id, new_min, new_max)` function:
 
 - df (dataframe): data set containing rows of product review/rating by users, same as df used in `svd_test`
 
 - user_id (str): user identification number/name
-⋅⋅* The user/customer that the script's functions should output recommendations for, based on the data set input.
+⋅⋅1. The user/customer that the script's functions should output recommendations for, based on the data set input.
 
 - new_min (int), new_max (int): current, or specified new range, for ratings by users
-⋅⋅* The minimum and maximum values of ratings should be taken across all entries and users. 
-⋅⋅* Range values will be used to pass through `Reader` function in surprise.
+⋅⋅1. The minimum and maximum values of ratings should be taken across all entries and users. 
+⋅⋅2. Range values will be used to pass through `Reader` function in surprise.
 
 
 ## How to Train
