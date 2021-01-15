@@ -1,6 +1,6 @@
 # Introduction
 ------------
-matrix_factorization.py is a Singular Value Decomposition (SVD) script meant as a Collaborative Filtering approach for Recommender Systems. The script utilises the [surprise](http://surpriselib.com/) package to build a trainset using existing data, and to output recommendations for a particular user. 
+matrix_factorization.py is a Singular Value Decomposition (SVD) script meant as a Collaborative Filtering approach for Recommender Systems. The script utilises the [surprise](http://surpriselib.com/) package, which deals with explicit rating data. The package is used to build a trainset using existing data, and to return rating predictions for a particular user where products with rating predictions on the higher spectrum can be output as recommendations specific for the user. 
 
 
 # Requirements
@@ -15,6 +15,7 @@ Use the package manager [pip](https://pip.pypa.io/en/stable/) to install Surpris
 ```bash
 pip install scikit-surprise
 ```
+
 For data manipulation, 
 ```python
 import pandas as pd
@@ -31,14 +32,14 @@ from surprise import SVD
 
 # Data Required
 ------------
-df (dataframe): data set containing rows of item review/rating by users
+- df (dataframe): data set containing rows of item review/rating by users
 df should ideally contain the rows: User Id, Product Id, and Rating 
 These 3 variables are needed to make up the data to pass through surprise package's functions.
 
-user_id (str): user identification
+- user_id (str): user identification
 The user/customer that the script functions should output recommendations for, based on the df input.
 
-range of ratings
+- range of ratings
 minimum rating (int) and maximum rating (int) found across all users in the data set input.
 
 
