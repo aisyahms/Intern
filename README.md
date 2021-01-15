@@ -1,6 +1,6 @@
 # Introduction
 ------------
-matrix_factorization.py is a Singular Value Decomposition (SVD) script meant as a Collaborative Filtering approach for Recommender Systems. The script utilises the [Surprise](http://surpriselib.com/) package to build a trainset using existing data, and to output recommendations for a particular user. 
+matrix_factorization.py is a Singular Value Decomposition (SVD) script meant as a Collaborative Filtering approach for Recommender Systems. The script utilises the [surprise](http://surpriselib.com/) package to build a trainset using existing data, and to output recommendations for a particular user. 
 
 
 # Requirements
