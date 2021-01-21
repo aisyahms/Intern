@@ -2,6 +2,9 @@
 import pandas as pd
 import numpy as np
 
+# Misc
+import json
+
 # Surprise package
 import surprise
 from surprise import Dataset, Reader
@@ -25,8 +28,23 @@ def svd_test(df, cols=['UserId','ProductId','Score']):
     all_results (list): [test_rmse, fit_time, test_time], all 3 values are mean over a number of folds, here cv=5
     """
     
-    df = df.drop_duplicates(subset=df.columns[2:].to_list(), keep='first') # df contains duplicate entries
+    df = df.drop_duplicates(subset=df.columns[2:].to_list(), keep='first') # df contains duplicate entries    
     df = df[cols].reset_index(drop=True)
+    
+    '''======== Purge infrequent consumers ========'''
+    usercounts = df['UserId'].value_counts()
+    user_filter = usercounts[usercounts > 2] # filter for users with more than 2 ratings
+    user_filter = user_filter.index.tolist()
+    df = df.loc[df['UserId'].isin(user_filter)]
+    
+    '''======== Purge infrequent stores ========'''
+    pdtcounts = df['ProductId'].value_counts()
+    product_filter = pdtcounts[pdtcounts > 9] # filter for products with more than 9 ratings
+    product_filter = product_filter.index.tolist()
+    df = df.loc[df['ProductId'].isin(product_filter)]
+    
+    max_qty = df['Score'].max()
+    min_qty = df['Score'].min()
     reader = Reader(rating_scale=(1, 5))
     data = Dataset.load_from_df(df, reader)
     trainset = data.build_full_trainset()
@@ -72,7 +90,7 @@ def convert_rating(x, old_min, old_max, new_min, new_max):
     
 def svd_recommendation(fitted_model, df, user_id):
     
-    """recommends up to 15 top products that user has not rated before, based on other users, with the SVD algorithm
+    """recommends products that user has not rated before, based on all users, with the SVD algorithm
     
     Parameters:
     fitted_model: train set already fitted with the algo i.e. algo.fit(trainset)
@@ -80,7 +98,7 @@ def svd_recommendation(fitted_model, df, user_id):
     user_id (str): user to predict product recommendations for
     
     Returns:
-    sort_recommendations (dict): sorted dictionary of ProductId as key and Est rating as value for up to 15 top recommended products
+    sort_recommendations (dict): sorted (descending) dictionary of ProductId as key and Est rating as value for recommended products
     """
     
     all_products = df['ProductId'].unique() # all unique products in the df given
@@ -96,8 +114,8 @@ def svd_recommendation(fitted_model, df, user_id):
     predictions_df = pd.DataFrame(predictions, columns=['UserId', 'ProductId', 'Score', 'Est', 'Details'])
     predictions_df.sort_values(by='Est', ascending=False, inplace=True)
        
-    # filter for top 15 recommendations for user
-    recommendations = predictions_df[['ProductId', 'Est']][:15].reset_index(drop=True)
+    # product recommendations in descending order of predicted ratings
+    recommendations = predictions_df[['ProductId', 'Est']].reset_index(drop=True)
     recommendations = recommendations.set_index('ProductId').to_dict().get('Est') # set ProductId as key, Est as value
     sort_recommendations = sorted(recommendations.items(), key=lambda x: x[1], reverse=True) # sort products according to rating
 
@@ -106,8 +124,7 @@ def svd_recommendation(fitted_model, df, user_id):
 
 def recommend(df, user_id, new_min, new_max):
     
-    """recommends user_id products according to what the users have rated previously, 
-    inclusive of (1) products they have never rated before, (2) products they have rated highly before
+    """recommends user_id products they have never rated before, according to what the users have rated previously
     
     Parameters:
     df (dataframe): data to be trained and tested on for SVD recommendation
@@ -117,18 +134,28 @@ def recommend(df, user_id, new_min, new_max):
     new_max (int): new maximum rating
     
     Returns:
-    all_recommendations (nested dict): contains 2 nested dicts,
-    (1) New Recommendations: contains dict with ProductId as key and predicted rating as value for up to 15 products never rated by user
-    (2) Other Recommendations: contains dict with ProductId as key and rating as value for up to 5 products highly rated before by user, if any
+    recommended products (dict): dictionary with ProductId as key and predicted rating as value for products never rated by user
+    dict is arranged in descending order of predicted ratings
     """
     
     df = df.drop_duplicates(subset=df.columns[2:].to_list(), keep='first') # df contains duplicate entries
     df = df[['UserId', 'ProductId', 'Score']].reset_index(drop=True)
     user_df = df[df['UserId'] == user_id]
-    # print("----User Rating for Products Dataframe----")
-    # print(user_df)
-    # print("------------------------------------------")
-
+    
+    print("Purging infrequent customers...")
+    '''======== Purge infrequent consumers ========'''
+    usercounts = df['UserId'].value_counts()
+    user_filter = usercounts[usercounts > 2] # filter for users with more than 2 ratings
+    user_filter = user_filter.index.tolist()
+    df = df.loc[df['UserId'].isin(user_filter)]
+    
+    print('Purging infrequent stores...')
+    '''======== Purge infrequent stores ========'''
+    pdtcounts = df['ProductId'].value_counts()
+    product_filter = pdtcounts[pdtcounts > 9] # filter for products with more than 9 ratings
+    product_filter = product_filter.index.tolist()
+    df = df.loc[df['ProductId'].isin(product_filter)]
+    
     max_qty = df['Score'].max()
     min_qty = df['Score'].min()
     
@@ -146,28 +173,9 @@ def recommend(df, user_id, new_min, new_max):
     algo = SVD()
     model = algo.fit(trainset)
 
-    all_recommendations = {}
-    recommended_products = svd_recommendation(model, df, user_id) # get up to 15 recommended products never rated before
-    all_recommendations['New Recommendations'] = recommended_products
+    recommended_products = svd_recommendation(model, df, user_id) # recommended products never rated before
+    print(recommended_products)
+    with open('output.json', 'w') as json_file:
+        json.dump(recommended_products, json_file)
 
-    # svd_recommendation doesn't include products that have been rated by user
-    # we shall include products that have been highly rated by user to final recommendation results
-    
-    user_df = user_df.sort_values(by='Score', ascending=False)
-    user_df = user_df.drop_duplicates(subset=user_df.columns[:-1].to_list(), keep='first')
-    not_svd_rec = user_df[['ProductId', 'Score']][:5] # top 5 rated products by user
-    
-    other_recommendations = {}
-    for pdt in not_svd_rec['ProductId']:
-        temp = user_df[user_df['ProductId'] == pdt].iloc[0] # only the first instance of pdt in user_df i.e. the highest rating
-        if temp['Score'] >= 4: # considering a rating of 4 or 5 as high/ can repeat purchase      
-            other_recommendations[pdt] = temp['Score']
-    all_recommendations['Other Recommendations'] = other_recommendations
-    
-    # print()
-    # if len(other_recommendations) != 0: # at least 1 product purchased before was rated highly by user
-        # print(user_id + ' can consider repeat purchases for products like:')
-    # else: # user has never rated any product purchased before highly
-        # other_recommendations = user_id + ' had no prior highly rated purchases.'
-
-    return all_recommendations
+    return 'File saved: '+'output.json'
