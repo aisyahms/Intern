@@ -4,10 +4,10 @@ Recommender System using SVD
 
 import numpy as np
 import pandas as pd
-import streamlit as st 
+import streamlit as st
 from svd import convert_rating, svd_recommendation, recommend
 
-data = pd.read_csv('../../data/NewProfile.csv')
+df = pd.read_csv('NewProfile.csv')
 
 def welcome():
     return "Welcome All"
@@ -41,8 +41,10 @@ def main():
     new_max = st.text_input("Maximum Rating","Type Here")
     result=""
     if st.button("Recommend"):
-        result=predict_reco(data, str(user_id), int(new_min), int(new_max))
+        result=predict_reco(df, str(user_id), int(new_min), int(new_max))
     st.success('The recommendations are: {}'.format(result))
 
 if __name__=='__main__':
     main()
+    #user_id = 'A3SGXH7AUHU8GW'
+    #print(predict_reco(df, user_id, 1, 5))
