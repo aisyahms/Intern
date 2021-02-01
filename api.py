@@ -23,7 +23,6 @@ def recommendations():
     uid = request.form.get("user_id")
     reco = recommend(df, str(uid), 1, 5)
     return reco
-
         
 if __name__ == "__main__":
     app.run()
