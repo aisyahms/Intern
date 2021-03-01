@@ -1,3 +1,4 @@
+"""for recommendation with tf-idf only, not updated with Apriori association"""
 import numpy as np
 import pandas as pd
 import math
